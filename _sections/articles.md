@@ -1,5 +1,5 @@
 ---
-layout: page
+order: 1
 title: Articles
 permalink: /articles/
 ---
