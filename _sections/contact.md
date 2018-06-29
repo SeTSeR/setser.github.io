@@ -1,0 +1,17 @@
+---
+title: Contact
+icon: fa-envelope
+order: 3
+---
+<form method="post" action="https://formspree.io/{{ site.email }}">
+  <div class="row">
+    <div class="6u 12u$(mobile)"><label>Name<input type="text" name="name" /></label></div>
+    <div class="6u$ 12u$(mobile)"><label>Email<input type="text" name="email" /></label></div>
+    <div class="12u$">
+      <label>Message<textarea name="message"></textarea></label>
+    </div>
+    <div class="12u$">
+      <input type="submit" value="Send Message" />
+    </div>
+  </div>
+</form>
