@@ -5,6 +5,8 @@ date: 2017-07-25 18:03:32 +0300
 categories: c dbus glib
 ---
 
+An example of getting info about currently playing track from D-Bus using MPRIS. This code was used in [AnnicomScrobbler](https://github.com/SeTSeR/AnnicomScrobbler.git).
+
 ```c
 #include <stdbool.h>
 #include <stdio.h>

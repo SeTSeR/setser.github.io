@@ -1,8 +1,10 @@
 ---
 title: Contact
 icon: fa-envelope
-order: 3
+order: 4
 ---
+<p>Feel free to contact me.</p>
+
 <form method="post" action="https://formspree.io/{{ site.email }}">
   <div class="row">
     <div class="6u 12u$(mobile)"><label>Name<input type="text" name="name" /></label></div>
