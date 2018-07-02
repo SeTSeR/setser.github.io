@@ -9,7 +9,7 @@ In 2017 I graduated [Kolmogorov's boarding school](https://internat.msu.ru) and 
 
 <!-- .slide: style="text-align: left;" -->
 
-The most important projects, in which I took part are:
+Some projects, in which I took part:
 <div style="text-align: left"><ul>
 <li><a href="https://github.com/NoticEditorTeam/NoticEditor.git">NoticEditor</a> - note-taking application with support of hierarchical notes, LaTeX and Markdown and its <a href="https://github.com/NoticEditorTeam/NoticEditorAndroid.git">Android flaw</a>.</li>
 <li><a href="https://github.com/SeTSeR/CompilerLab.git">CompilerLab</a> - simple tool for finding an area of curvilinear triangle. It grew from my laboratory work to a hobby project. On this project I trained some aspects of compiler design, such as parsing, code generation and optimization.</li>
