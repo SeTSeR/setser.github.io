@@ -5,7 +5,7 @@ layout: page
 icon: fa-graduation-cap
 ---
 
-In 2017 I graduated [Kolmogorov's boarding school](https://internat.msu.ru) and entered into [The Faculty of Computational Mathemathics and Cybernetics](https://cmc.msu.ru). I've also finished some courses on [Stepik](https://stepik.org): Java Web Development([1](https://stepik.org/course/146), [2](https://stepik.org/course/186)) and Functional Programming in Haskell([1](https://stepik.org/course/75), [2](https://stepik.org/course/693)).
+In 2017 I graduated [Kolmogorov's boarding school](http://internat.msu.ru) and entered into [The Faculty of Computational Mathemathics and Cybernetics](https://cmc.msu.ru). I've also finished some courses on [Stepik](https://stepik.org): Java Web Development([1](https://stepik.org/course/146), [2](https://stepik.org/course/186)) and Functional Programming in Haskell([1](https://stepik.org/course/75), [2](https://stepik.org/course/693)).
 
 <!-- .slide: style="text-align: left;" -->
 
