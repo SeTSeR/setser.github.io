@@ -30,22 +30,22 @@ layout: post
 
 
 # Task description
-The task, I was supposed to solve, was the following: three functions are given, and area of curvilinear triangle between the curves, described by these functions, should be calculated. Also two numbers are given. It's guaranteed that every pair of curves contain exactly one common point in this segment. Also, it's guaranteed that these functions are twice differentiable. Functions, that describe triangle, are written in file, using the following format:
+The task, I was supposed to solve, was the following: three functions are given, and area of curvilinear triangle between the curves, described by these functions, should be calculated. Also two numbers are given. It's guaranteed that every pair of curves contains exactly one common point in this segment. Also, it's guaranteed that these functions are twice differentiable. Functions, that describe triangle, are written in file, using the following format:
 
 The first line of the file contains bounds of the segment, in which vertices of triangle are situated.
 
 Next three lines contain formulas for functions, which are sides of triangle, in [reverse polish notation](https://en.wikipedia.org/wiki/Reverse_Polish_notation). Every line consists of **terms**, separated by spaces. The term is:
 * A **variable**, which is denoted by symbol 'x'.
 * A **number**, which is described in format, supported by [scanf](http://www.cplusplus.com/reference/cstdio/scanf/) function from C standard library. Additionally, constants, described by symbols 'e' and 'pi', should be supported.
-* **Unary operation**, which can be one of these: sine, denoted by 'sin', cosine, denoted by 'cos', tangent, denoted by 'tan' and cotangent, denoted by 'ctg'. Later I will also add logarithm operation, denoted by 'ln'.
-* **Binary operation**, which can be on of the following: addition, denoted by '+', subtraction, denoted by '-', multiplication, denoted by '\*', and division, denoted by '/'. Later I will also add power operation, denoted by '^', but this operation should be discussed separately, due to reasons I'll explain later.
+* **Unary operation**, which can be one of these: sine, denoted by 'sin', cosine('cos'), tangent('tan') and cotangent('ctg').
+* **Binary operation**, which can be one of the following: addition, denoted by '+', subtraction('-'), multiplication('\*'), and division('/').
 
 There must be two programs, *written in C*: a solver, which calculates an area of triangle, using prepared code for calculating the functions, and a compiler, which generates from input file an assembly code, which calculates the function value in given point x, *using an x87 instruction set*. Building of the program should be performed, *using make*. Input file should be specified as environment variable during the compilation:
 ```
 SPEC_FILE=input.txt make
 ```
 
-The answer must be calculated with an accuracy of 0.1%.
+The result must be calculated with an accuracy of 0.1%.
 
 # Design
 ## Project structure
@@ -68,8 +68,8 @@ Since compiler and solver are independent programs, each has its own directory t
 ## Build system
 As project structure is defined, it's time to talk about program building process. It goes through several stages:
 1. The compiler should be built.
-2. The compiler should generate from the input file the assembly listing, which is compiled to an object file.
-3. The solver should be built from sources using the module, built in step 2. This step can be made independent from first two steps, using dynamic linking.
+2. The compiler should generate from the input file the assembly listing which is compiled to an object file.
+3. The solver should be built from sources using the module built in step 2. This step can be made independent from first two steps using dynamic linking.
 
 Let's look at Makefile, which lets us to perform these tasks:
 ```Makefile
@@ -163,9 +163,9 @@ $(OBJ): $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 ## Solver design
 This and the following section describe the structure of our programs and basic interface of our modules.
 
-Let's begin with solver, because it's a simplest part of the task. What should it do? This program has previously prepared bounds and functions, so the simplest interface of working with this program is calling it without arguments and getting the result of its work, i. e. an area of curvilinear triangle, as its output.
+Let's begin with solver, because it's a simplest part of the task. What should it do? This program has previously prepared bounds and functions, so the simplest interface of working with this program is calling it without arguments and getting the result of its work, i.e an area of curvilinear triangle, as its output.
 
-Searching the area of curvilinear triangle conists of two parts: searching the vertices and searching area of triangle as algebraic sum of areas bounded by a graphs of functions, the X-axis and vertical lines, passing through found points. Mathemathical side of this task is described in detail in my report. So, mathematical module must implement two functions: calculating the root of the equation and calculating the integral of the function. The natural choice for interface of this module will be a function area with the following signature:
+Searching the area of curvilinear triangle consists of two parts: searching the vertices and searching area of triangle as algebraic sum of areas bounded by graphs of functions, the X-axis and vertical lines, passing through found points. Mathematical side of this task is described in detail in my report. So, mathematical module must implement two functions: calculating the root of the equation and calculating the integral of the function. The natural choice for interface of this module will be a function area with the following signature:
 
 solver/include/maths.h:
 ```C
@@ -186,20 +186,20 @@ double area(double a, double b, function funcs[3], function derivatives[3], doub
 ```
 
 ## Compiler design
-The second program we need to create is significantly more complex, but the scenario of its use is very simple: it's given two arguments - name of the file with borders and functions and name of the file, where the listing should be written. Compiler reads info from the first file and writes the output into the second.
+The second program we need to create is significantly more complex, but the scenario of its use is very simple: it's given two arguments - name of the file with bounds and functions and name of the file, where the listing should be written. Compiler reads data from the first file and writes the output into the second.
 
 To describe the structure of the program, we need to remember the steps of the compilation process:
-1. **Lexical analysis**, i. e. splitting input into tokens - some strings, which have some special value in the language.
+1. **Lexical analysis**, i.e splitting input into tokens - some strings, which have some special value in the language.
 2. **Syntax analysis** or **parsing** - building from the sequence of tokens a special structure, called **abstract syntax tree**, according to the special set of rules, called **grammar**.
-3. **Semantic analysis** - collecting from code some semantic information, for example, types of the variables.
+3. **Semantic analysis** - collecting some semantic information from code, for example, types of the variables.
 4. Generation of code in some **intermediate representation**, for example **three-address code**. It allows us to make first three stages independent of the next ones, so we can use different parsers with the same code generation, or, vice versa, use several code generators for one language.
 5. Optimizing the resulting code.
 6. Finally, generating the machine (or assembly) code from intermediate representation.
 
 In our case, this scheme can be considerably simplified:
-1. Lexical and syntax analysis can be united in one stage, because the only tokens are white symbols and terms.
+1. Lexical and syntax analysis can be united in one stage, because the only tokens are whitespaces and terms.
 2. Semantic analysis is not needed, except for calculating of derivative (don't know if it actually can be classified as semantic analysis).
-3. Optimizations are mostly very simple and can be applied directly to the trees, so generation of the intermediate representation becomes obsolete.
+3. Optimizations are mostly very simple and can be applied directly to parsing trees, so generation of the intermediate representation becomes obsolete.
 
 Summarizing these ideas, we can come to the following set of modules and their interfaces:
 * parser module, which provides the function, transforming a line of text into function, represented by this line.
@@ -231,7 +231,7 @@ compiler/include/codegen.h:
 void gen_listing(double a, double b, AST* functions[3], AST* derivatives[3], FILE* out);
 ```
 
-Note, that we didn't state, what the type AST means. There are several ways to implement this structure, we'll discuss it later. As for now, we'll just include in every file, which requires this definition, file ast.h, in which, as we suggest for now, this type is described.
+Note, that we didn't state, what the type AST means. There are several ways to implement this structure, we'll discuss it later. As for now, we'll just include in every file, which requires this definition, file ast.h. We'll assume for now, that this file contains a description of type of the parsing tree.
 
 # Implementation
 
@@ -410,7 +410,7 @@ gives us:
 ```
 as intended.
 
-Now we need to implement mathematical module. Again, we will write a code, assuming that we already have functions for integrating and searching roots of equation. In this case, we should reach an agreement on which signature this functions would have. I'm going to use the [Newthon's method](https://en.wikipedia.org/wiki/Newton%27s_method) for solving equations and the [Simpson's rule](https://en.wikipedia.org/wiki/Simpson%27s_rule) for calculating an integral. According to requirements of these methods, the signatures would be the following:
+Now we need to implement mathematical module. Again, we will write a code, assuming that we already have functions for integrating and searching roots of equation. In this case, we should reach an agreement on which signature this functions would have. I'm going to use the [Newton's method](https://en.wikipedia.org/wiki/Newton%27s_method) for solving equations and the [Simpson's rule](https://en.wikipedia.org/wiki/Simpson%27s_rule) for calculating an integral. According to requirements of these methods, the signatures would be the following:
 ```C
 double integrate(double (*f)(double), double a, double b, double eps) {
     return 0;
@@ -421,9 +421,9 @@ double solve(double (*f)(double), double (*df)(double), double a, double b, doub
 }
 ```
 
-The process of searching of an area of curvilinear triangle can be divided into three stages:
+The process of searching area of curvilinear triangle can be divided into three stages:
 1. Searching the common point of the curves, which are sides of the triangle. Let these points be x1, x2 and x3.
-2. Searching the area between the graph of the function, X-axis and vertical lines, that passes through found points(i. e. integrals of the functions).
+2. Searching the area between the graph of the function, X-axis and vertical lines, that passes through found points(i.e integrals of the functions).
 3. Searching an area of a triangle, using the formula: ![Formula of area](http://latex2png.com/output//latex_b75f6caa8fe0789b2728f603c6651c1a.png)
 
 There are two questions, which should be answered, before we'll be able to implement our *area* function. Firstly, we should remember, that the Newton's method can only solve equations of type f(x) = 0, but we need to solve equations of type f(x) = g(x). Mathematically, this equation is equivalent to the first equation, but in C we have no straightforward way to create the function, that returns f(x) - g(x), if we have functions, that return f(x) and g(x). I chose a little hacky workaround of this problem:
@@ -549,7 +549,7 @@ Which is the correct answer.
 
 ## Compiler implementation
 
-Since we have finished with mathematical part, let's proceed with a compiler. As I stated above, we'll have to implement at least four modules: parser, derivative, optimizer and codegen. But before that we will write a program, assuming that all of these modules have already been written. It should be noted, that before we write all the modules, we won't be able to build the entire system, so we would build and test a compiler *separately*. We have a Makefile for it, so we're able to build it independently of the rest of the program. Since we will work only with the compiler now, I will omit the prefix compiler/ in all file names below.
+Since we have finished with mathematical part, let's proceed with a compiler. As I stated above, we'll have to implement at least four modules: parser, derivative, optimizer and codegen. But before that we will write a program, assuming that all of these modules have already been written. It should be noted, that before we write all the modules, we won't be able to build the entire system, so we would build and test a compiler *separately*. We have a Makefile for it, so we're able to build it independently from the rest of the program. Since we will work only with the compiler now, I will omit the prefix compiler/ in all file names below.
 
 The high-level logic of the program is:
 1. Check, whether we have at least two (in fact, three, because the program's name is the first argument) command-line arguments.
@@ -602,9 +602,9 @@ As you can see, here appeared a module, which we haven't talked about before, ca
 
 include/error.h:
 ```C
-void error(char* message);
+voi.eror(char* message);
 ```
-It provides a function, handling an error, given as error message. For the purposes of this article, we will choose the simplest way of error hadling: the program will just crash and print the error message, so this signature will work well. For the more advanced error handling, it's good to have a special error type, which can store info about error type and a cause of it. The implementation of this module is straightforward and can be provided at once:
+It provides a function, handling an error, given as error message. For the purposes of this article, we will choose the simplest way of error handling: the program will just crash and print the error message, so this signature will work well. For the more advanced error handling, it's good to have a special error type, which can store information about error type and a cause of it. The implementation of this module is straightforward and can be provided at once:
 
 src/error.c:
 ```C
@@ -613,14 +613,14 @@ src/error.c:
 #include <stdio.h>
 #include <stdlib.h>
 
-void error(char* message) {
+voi.eror(char* message) {
     fputs("There was an error during the compilation:", stderr);
     fputs(message, stderr);
     exit(EXIT_FAILURE);
 }
 ```
 
-Before we'll move on, I'd like to draw attention that I won't handle errors, that are directly related to our compiler project, for example, IO errors, or allocation errors. In the real world programs these errors, of course, should be handled.
+Before we'll move on, I'd like to draw attention that I won't handle errors, that are directly related to our compiler project, for example, I/O errors, or allocation errors. In the real world programs these errors, of course, should be handled.
 
 To make the program build and work, we should provide stub implementation for used modules (except already implemented module *error*), as we did before. Here they are:
 
@@ -673,7 +673,10 @@ As you remember, when we designed a compiler, we left a type of the parsing tree
 3. Every node, which has two children, describes an expression of type 'expr1 expr2 op', where expr1 is the expression, described by the left child of given node, expr2 is the expression, described by the right child of given node, and op has value '+', '-', '\*' or '/'.
 4. Parsing tree has no nodes, which have three or more children.
 
-From this definition follows, that we can use two enums: the first for describing the type of the node: is it a variable, a constant, or an expression and the second for describing of which operator should be applied to operands, if it should. Using these enums, we can describe the type of the parsing tree like this:
+From this definition follows, that we can use two enums:
+* the first for describing the type of the node: is it a variable, a constant, or an expression.
+* the second for describing of which operator should be applied to operands, if it should.
+Using these enums, we can describe the type of the parsing tree like this:
 
 include/ast.h:
 ```C
@@ -850,7 +853,7 @@ As I mentioned earlier, parsing is a process of building parsing tree from the i
 * If the term is one of "+", "-", "*" or "/", we should take two values from the stack and create a tree, which represents an expression of type "expr1 expr2 op", where op is current term, expr2 is an expression, represented by the top of the stack, and expr1 is an expression, represented by the second value taken from the stack. Resulting tree should also be put onto stack.
 3. If we couldn't take arguments from the stack at some stage, the expression was ill-formed.
 4. If the stack contains more then one element after handling all terms, the expression was ill-formed.
-5. If the stack is empty after handling all terms, the expression was empty.
+5. If the stack i.epty after handling all terms, the expression was empty.
 
 More detailed discussion can be found [here](https://watermark.silverchair.com/5-3-210.pdf?token=AQECAHi208BE49Ooan9kkhW_Ercy7Dm3ZL_9Cf3qfKAc485ysgAAAaUwggGhBgkqhkiG9w0BBwagggGSMIIBjgIBADCCAYcGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMlcG5KHcPpUE3s_NjAgEQgIIBWImCE1IBFGakFq5m2kFAo64_KsCo6VAef6Evyd-tAWMr1ouMiGWaX4nFWGBYlzCuLKm69fPxJYZBKoTXs6-r3VFtwC0tL9_OlACQxwlPbf0hRbErKw1UNbzHDOTFzR8xDm2TsGQdZFqIWdbcd7CRV_FDe_670qS3XRB3uCpB6qAr-Z-3B7r9hSNyQxq0edyVZTVg7yOlnzxVLYBFSf78WSq3uWDzamSPVkPaGgTWuFaM0gelLNBWOVwoXyV9lcJEQykxyHfTAg2s6Pifnftw3-mHrz5ar5gg6kRM6sXg4dW-XLdhv_dnrH7Q-PNiV1Ydp1UhRacDQ6Ezq_RIAO68dWf3g04PX3Zee0NzbNvb_Gpjleqx0NvdtOy1a5aPciJvcfk8TIGTGc4zP-1zrsImpRsSKlzVdmA5vPnodnJ5tsqoy7A3ikjxxMGwUYeikCiq81oUq9MexEao).
 
@@ -953,7 +956,7 @@ AST* parse(char* line) {
 }
 ```
 
-Since we wrote a module, it's time to test it. In contrast to mathematical module, where we could easily test the work of entire program, testing the entire compiler requires writing at least one additional module, code generator, which is quite complex, so we should think about another way to check the correctness of our program. For example, we can note, that if *expr* is a valid expression in our terms, then print_tree(parse(expr), out) will write to file out *expr*, because we chose postfix notation for printing a tree. The only change is that constant 'e' and 'pi' will be replaced by their numeric values, because we don't have special type of parsing tree for them. It means, that we can test our program by modifying the *main* function, adding there some additional lines in the end of the function just before *return*:
+Since we wrote a module, it's time to test it. In contrast to mathematical module, where we could easily test the work of entire program, testing the entire compiler requires writing at least one additional module, code generator, which is quite complex, so we should think about another way to check the correctness of our program. For example, we can note, that if *expr* is a valid expression in our terms, then print_tree(parse(expr), out) will write to file out *expr*, because we chose postfix notation for printing a tree. The only change is that constant 'e' and 'pi' will be replaced by their numeric values, because we don't have special type of parsing tree for them. It means, that we can test our program by modifying the *main* function, adding there some lines in the end of the function just before *return*:
 
 src/main.c:
 ```C
@@ -998,7 +1001,7 @@ In the previous stage we defined 1-to-1 correspondence between functions and par
 * (tg(f(x)))' = -f'(x)/cos^2(f(x))
 * (ctg(f(x)))' = -f'(x)/sin^2(f(x))
 
-Before implementation we should raise two questions. The first is: in some formulas we use f(x) as a node for a tree. Should we copy the tree of f(x) or we can use the same tree? And the second is: which representation should we choose for unary minus operator?
+Before implementation we should raise a couple of questions. The first is: in some formulas we use f(x) as a node for a tree. Should we copy the tree of f(x) or we can use the same tree? And the second is: which representation should we choose for unary minus operator?
 
 The answer to the first question follows from the logic of destroying tree: we cannot use links to source tree in derivative tree, because if we try to destroy both trees, we'll get a double free error, trying to destroy source tree twice. It means, that source tree should be copied before calculating a derivative and interface of ast.h should be extended by the following function:
 include/ast.h:
@@ -1152,7 +1155,7 @@ If all is correct, the compiler should produce the following output:
 
 The provided approach to testing seems to be very interesting, because it can be easily generalized for any functions, which produce comparable values. Besides that, the testing function can be easily moved to a separate program, so the compiler can be freed from an extra side effects. But this approach does not allow to check side effects of the function. However, in addition to custom error handling, this approach can be a powerful tool for testing a program, so we'll use it for optimizer too.
 
-It's also worth mention, that function *test_derivative* has a memory leak. In our model example this does not have a great effect, because trees are not very big, but in a real programs memory leaks should be avoided.
+It's also worth mentioning, that function *test_derivative* has a memory leak. In our model example this does not have a great effect, because trees are not very big, but in a real programs memory leaks should be avoided.
 
 ### Optimization
 
@@ -1192,7 +1195,7 @@ void fold_constants(AST* tree) {
 }
 ```
 
-Another area of optimizations is using some mathematical identities. For example, here is an optimizator, which uses identities "x + 0 = x", "x - 0 = x", "0 * x = 0" and "0 / x = 0" for simplifying the tree(order is important in this case):
+Another area of optimizations is using some mathematical identities. For example, here is an optimizer, which uses identities "x + 0 = x", "x - 0 = x", "0 * x = 0" and "0 / x = 0" for simplifying the tree(order is important in this case):
 
 src/optimizer.c:
 ```C
@@ -1387,7 +1390,7 @@ void append(hashset* table, hashset* toappend);
 double* to_array(hashset* table, size_t* size);
 ```
 
-Using this structure, we can write collecting info about constants as follows:
+Using this structure, we can collect information about constants as follows:
 
 src/codegen.c:
 ```C
@@ -1454,7 +1457,7 @@ void gen_rodata(double** constants, size_t *size, double a, double b, AST* funct
 ```
 The first two arguments are needed to return from the function array with constants, we'll need it for functions generation.
 
-To check, that we are in the right way, let's compile program and look to its output:
+To check, that we are in the right way, let's compile program and see its output:
 ```
 make
 ./compiler ../input.txt output.asm
@@ -1482,7 +1485,7 @@ section .rodata
     const5 dq 1.000000
 ```
 
-Which contain numbers similar to numbers, which were in our stub implementation. The only differences are that we have 0 - 1/4 instead of -0.25 and 0.628319 instead of 0.2π. It means, we are ready to go on.
+Which contain numbers similar to numbers that were in our stub implementation. The only differences are that we have 0 - 1/4 instead of -0.25 and 0.628319 instead of 0.2π. It means, we are ready to go on.
 
 The last and the most complex section is *.text* section. It contains a code of functions, which would calculate values of given functions in given point *x* in the following manner:
 ```
@@ -1633,12 +1636,12 @@ void gen_text(double* constants, size_t size, AST* functions[], AST* derivatives
 }
 ```
 
-At this stage compiler produces too much code to check it with a look, it can be simpler to try to build the entire project with *make* and check that it works. Running the program gives us a familiar answer, that we got with the stub compiler:
+At this stage compiler produces too much code to check it with a look, it can be simpler to try to build the entire project with *make* and check that it works. Running the program gives us a familiar result, that we got with the stub compiler:
 ```
 1.651664
 ```
 
-To check, that out program is really correct, makes sense printing some values of generated functions in some intermediate points.
+To check, that out program is really correct, it makes sense printing some values of generated functions in some intermediate points.
 
 # Further improvements
 
@@ -1646,7 +1649,7 @@ There are many places in our program, which can be improved.
 
 ## Optimizations
 
-Firstly, we can improve our arithmetic optimizations. For example, we don't use commutativity and associativity of such operations, as '+' and '\*'. For example, an expression
+Firstly, we can improve our arithmetic optimizations. For example, we don't use commutativity and associativity of such operations as '+' and '\*'. For example, an expression
 ```
 2 3 x + +
 ```
