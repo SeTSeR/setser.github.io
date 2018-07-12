@@ -1685,6 +1685,8 @@ There are some places in our projects, that can be improved. For example, detach
 
 Another way of improving our program can be moving building of table with constants to an earlier phase. Then we can use link to this table instead of constant value in the tree, so we can avoid storing the values on the phase of generating *.text* section, if we find a way to convert this link to a variable name.
 
+Some of these ideas are implemented in my [CompilerLab](https://github.com/SeTSeR/CompilerLab), so check it out.
+
 # Resume
 
 In this article we built a calculating system, consisting of the compiler and the solver, which solves a problem of finding of area of curvilinear triangle on the given segment. During writing of this system, we saw some approaches to designing, writing and testing programs and described some was of further improvement of our program.
