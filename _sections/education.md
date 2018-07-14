@@ -5,11 +5,11 @@ layout: page
 icon: fa-graduation-cap
 ---
 
-In 2017 I graduated [Kolmogorov's boarding school](https://internat.msu.ru) and entered into [The Faculty of Computational Mathemathics and Cybernetics](https://cmc.msu.ru). I've also finished some courses on [Stepik](https://stepik.org): Java Web Development([1](https://stepik.org/course/146), [2](https://stepik.org/course/186)) and Functional Programming in Haskell([1](https://stepik.org/course/75), [2](https://stepik.org/course/693)).
+In 2017 I graduated [Kolmogorov's boarding school](http://internat.msu.ru) and entered into [The Faculty of Computational Mathemathics and Cybernetics](https://cmc.msu.ru). I've also finished some courses on [Stepik](https://stepik.org): Java Web Development([1](https://stepik.org/course/146), [2](https://stepik.org/course/186)) and Functional Programming in Haskell([1](https://stepik.org/course/75), [2](https://stepik.org/course/693)).
 
 <!-- .slide: style="text-align: left;" -->
 
-The most important projects, in which I took part are:
+Some projects, in which I took part:
 <div style="text-align: left"><ul>
 <li><a href="https://github.com/NoticEditorTeam/NoticEditor.git">NoticEditor</a> - note-taking application with support of hierarchical notes, LaTeX and Markdown and its <a href="https://github.com/NoticEditorTeam/NoticEditorAndroid.git">Android flaw</a>.</li>
 <li><a href="https://github.com/SeTSeR/CompilerLab.git">CompilerLab</a> - simple tool for finding an area of curvilinear triangle. It grew from my laboratory work to a hobby project. On this project I trained some aspects of compiler design, such as parsing, code generation and optimization.</li>
