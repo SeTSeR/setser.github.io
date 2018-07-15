@@ -54,7 +54,7 @@ As project structure is defined, it's time to talk about program building proces
 3. The solver should be built from sources using the module built in step 2. This step can be made independent from first two steps using dynamic linking.
 
 Let's look at Makefile, which lets us to perform these tasks:
-```Makefile
+```makefile
 SPEC_FILE ?= input.txt
 YASMFLAGS = -g dwarf2 -DUNIX -felf64
 BUILD_DIR = build
@@ -96,7 +96,7 @@ As we can see, this Makefile describes building a compiler, building a function 
 Also we would need two Makefiles for building compiler and solver:
 
 compiler/Makefile:
-```Makefile
+```makefile
 CFLAGS = -g -Iinclude -c -std=gnu99
 LDFLAGS = -lm
 SRC_DIR = src
@@ -118,7 +118,7 @@ $(OBJ): $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 ```
 
 and solver/Makefile:
-```Makefile
+```makefile
 CFLAGS = -g -Iinclude -c -std=gnu99
 LDFLAGS =
 SRC_DIR = src
@@ -150,7 +150,7 @@ Let's begin with solver, because it's a simplest part of the task. What should i
 Searching the area of curvilinear triangle consists of two parts: searching the vertices and searching area of triangle as algebraic sum of areas bounded by graphs of functions, the X-axis and vertical lines, passing through found points. Mathematical side of this task is described in detail in my report. So, mathematical module must implement two functions: calculating the root of the equation and calculating the integral of the function. The natural choice for interface of this module will be a function area with the following signature:
 
 solver/include/maths.h:
-```C
+```c
 double area(double a, double b, (double)(*f1)(double), (double)(*f2)(double), (double)(*f3)(double), double eps);
 ```
 
@@ -161,7 +161,7 @@ In fact, the fastest methods of calculating the roots of the equation require us
 Taking these ideas into account, we acquire the following code:
 
 solver/include/maths.h:
-```C
+```c
 typedef double (*function)(double)
 
 double area(double a, double b, function funcs[3], function derivatives[3], double eps);
@@ -192,22 +192,22 @@ Summarizing these ideas, we can come to the following set of modules and their i
 Interface of these modules can be represented as follows:
 
 compiler/include/parser.h:
-```C
+```c
 AST* parse(char* line);
 ```
 
 compiler/include/derivative.h:
-```C
+```c
 AST* derivative(AST* tree);
 ```
 
 compiler/include/optimizer.h:
-```C
+```c
 void optimize(AST* tree);
 ```
 
 compiler/include/codegen.h:
-```C
+```c
 #include <stdio.h>
 
 void gen_listing(double a, double b, AST* functions[3], AST* derivatives[3], FILE* out);
@@ -224,7 +224,7 @@ In this article we will follow top-to-bottom development strategy. In the first 
 At the first iteration of building the solver, we'll provide a stub implementation of mathematical interface, and write the solver program, using it. The simplest stub implementation of *area* function is simply returning zero:
 
 solver/src/maths.c:
-```C
+```c
 #include "maths.h"
 
 double area(double a, double b, function funcs[3], function derivatives[3], double eps) {
@@ -235,7 +235,7 @@ double area(double a, double b, function funcs[3], function derivatives[3], doub
 The high-level logic of the program is straightforward: we just need to call area function on given functions and return the result. The code will be like following:
 
 solver/src/main.c:
-```C
+```c
 #include "maths.h"
 
 #include <stdio.h>
@@ -265,7 +265,7 @@ Note, that we didn't denote functions with *extern* keyword, because functions i
 If we try to build our project with *make* now, we will fail, because we don't have any source code for compiler. So, let's provide some stub implementation for the compiler:
 
 compiler/src/main.c:
-```C
+```c
 #include <stdio.h>
 
 int main(int argc, char** argv) {
@@ -393,7 +393,7 @@ gives us:
 as intended.
 
 Now we need to implement mathematical module. Again, we will write a code, assuming that we already have functions for integrating and searching roots of equation. In this case, we should reach an agreement on which signature this functions would have. I'm going to use the [Newton's method](https://en.wikipedia.org/wiki/Newton%27s_method) for solving equations and the [Simpson's rule](https://en.wikipedia.org/wiki/Simpson%27s_rule) for calculating an integral. According to requirements of these methods, the signatures would be the following:
-```C
+```c
 double integrate(double (*f)(double), double a, double b, double eps) {
     return 0;
 }
@@ -411,7 +411,7 @@ The process of searching area of curvilinear triangle can be divided into three 
 There are two questions, which should be answered, before we'll be able to implement our *area* function. Firstly, we should remember, that the Newton's method can only solve equations of type f(x) = 0, but we need to solve equations of type f(x) = g(x). Mathematically, this equation is equivalent to the first equation, but in C we have no straightforward way to create the function, that returns f(x) - g(x), if we have functions, that return f(x) and g(x). I chose a little hacky workaround of this problem:
 
 solver/src/maths.c:
-```C
+```c
 //typedef double (*function)(double); - from header file
 
 static function givenf, giveng, givendf, givendg;
@@ -428,7 +428,7 @@ inline static double dfmindg(double x) {
 The second question, we should answer to, is which accuracy is acceptable in calculating the integrals and the roots. This question is discussed in detail in my report, so I'll just provide the code of calculating the area:
 
 solver/src/maths.c:
-```C
+```c
 #include <math.h> // for fabs
 
 double area(double a, double b, function[3] functions, function[3] derivatives, double eps) {
@@ -486,7 +486,7 @@ double area(double a, double b, function[3] functions, function[3] derivatives, 
 If we run this code, we'll get again zero as an answer, because we don't have correct implementations of functions *solve* and *integrate* yet. Here they are:
 
 solver/src/maths.c:
-```C
+```c
 double integrate(function f, double a, double b, double eps) {
 	int n = 1000;
 	double sum1 = 0, sum2 = 0;
@@ -545,7 +545,7 @@ The high-level logic of the program is:
 This logic can be expressed with the following code:
 
 src/main.c:
-```C
+```c
 #include "ast.h"
 #include "codegen.h"
 #include "derivative.h"
@@ -583,13 +583,13 @@ int main(int argc, char** argv) {
 As you can see, here appeared a module, which we haven't talked about before, called *error*. It provides the following, very simple, interface:
 
 include/error.h:
-```C
+```c
 voi.eror(char* message);
 ```
 It provides a function, handling an error, given as error message. For the purposes of this article, we will choose the simplest way of error handling: the program will just crash and print the error message, so this signature will work well. For the more advanced error handling, it's good to have a special error type, which can store information about error type and a cause of it. The implementation of this module is straightforward and can be provided at once:
 
 src/error.c:
-```C
+```c
 #include "error.h"
 
 #include <stdio.h>
@@ -607,7 +607,7 @@ Before we'll move on, I'd like to draw attention that I won't handle errors, tha
 To make the program build and work, we should provide stub implementation for used modules (except already implemented module *error*), as we did before. Here they are:
 
 src/parser.c:
-```C
+```c
 #include "parser.h"
 
 #include <stddef.h>
@@ -618,7 +618,7 @@ AST* parse(char* line) {
 ```
 
 src/derivative.c:
-```C
+```c
 #include "derivative.h"
 
 #include <stddef.h>
@@ -629,7 +629,7 @@ AST* derivative(AST* tree) {
 ```
 
 src/optimizer.c:
-```C
+```c
 #include "optimizer.h"
 
 void optimize(AST* tree) {
@@ -637,7 +637,7 @@ void optimize(AST* tree) {
 ```
 
 src/codegen.c:
-```C
+```c
 #include "codegen.h"
 
 void gen_listing(double a, double b, AST* functions[], AST* derivatives[], FILE* out) {
@@ -661,7 +661,7 @@ From this definition follows, that we can use two enums:
 Using these enums, we can describe the type of the parsing tree like this:
 
 include/ast.h:
-```C
+```c
 enum NODE_TYPE {
     VARIABLE,
     CONSTANT,
@@ -698,7 +698,7 @@ typedef struct AST AST;
 Along with the type of the tree, we should define some functions which work with our tree. In the first instance it will be enough for us to have functions for creating and destroying tree and a function to print tree for debugging purposes:
 
 include/ast.h:
-```C
+```c
 #include <stdio.h> // For FILE definition
 
 AST* create_tree();
@@ -712,7 +712,7 @@ Until we have no implementation of dynamic strings, it's preferable to print tre
 Note, that all the code, put into ast.h, must be placed between lines:
 
 include/ast.h:
-```C
+```c
 #ifndef _AST_H
 #define _AST_H
 
@@ -725,7 +725,7 @@ It's needed, because ast.h included in all header files of the compiler, which, 
 The implementation of these functions is simple, but lengthy:
 
 src/ast.c:
-```C
+```c
 #include "ast.h"
 
 #include <stdlib.h>
@@ -842,7 +842,7 @@ More detailed discussion can be found [here](https://watermark.silverchair.com/5
 As we can see, this algorithm requires an implementation of stack. I won't provide it here, but I will use it, assuming it provides the following interface:
 
 include/stack.h:
-```C
+```c
 #include "ast.h"
 
 typedef struct stack stack;
@@ -861,7 +861,7 @@ An example of implementation can be found [in my repo](https://github.com/SeTSeR
 When we have all necessary tools, we can proceed with an implementation of parsing:
 
 src/parser.c:
-```C
+```c
 AST* parse(char* line) {
     stack* st = create_stack();
     char* token = strtok(line, " \n");
@@ -941,7 +941,7 @@ AST* parse(char* line) {
 Since we wrote a module, it's time to test it. In contrast to mathematical module, where we could easily test the work of entire program, testing the entire compiler requires writing at least one additional module, code generator, which is quite complex, so we should think about another way to check the correctness of our program. For example, we can note, that if *expr* is a valid expression in our terms, then print_tree(parse(expr), out) will write to file out *expr*, because we chose postfix notation for printing a tree. The only change is that constant 'e' and 'pi' will be replaced by their numeric values, because we don't have special type of parsing tree for them. It means, that we can test our program by modifying the *main* function, adding there some lines in the end of the function just before *return*:
 
 src/main.c:
-```C
+```c
 print_tree(parse(test1), stdout);
 puts("");
 char test2[] = "2 x *";
@@ -987,13 +987,13 @@ Before implementation we should raise a couple of questions. The first is: in so
 
 The answer to the first question follows from the logic of destroying tree: we cannot use links to source tree in derivative tree, because if we try to destroy both trees, we'll get a double free error, trying to destroy source tree twice. It means, that source tree should be copied before calculating a derivative and interface of ast.h should be extended by the following function:
 include/ast.h:
-```C
+```c
 AST* copy_tree(AST* source);
 ```
 
 Implementation of this function is very straightforward:
 src/ast.c:
-```C
+```c
 AST* copy_tree(AST* source) {
     AST *result = create_tree();
     result->node_type = source->node_type;
@@ -1021,7 +1021,7 @@ The answer on the second question is in fact a matter of convention, because all
 When we have these conventions, we can write the implementation of the *derivative* function. The full code is very long, so I will provide only the main code and code for taking derivative of operators "+" and "sin", the rest can be written, using conventions above. The full code can be found [here](https://github.com/SeTSeR/CompilerLabAgain/blob/f06399fb487cd702b9c488b6f421ee09e349968c/compiler/src/derivative.c).
 
 src/derivative.c:
-```C
+```c
 AST* derivative(AST* tree) {
     AST* result = create_tree();
     switch(tree->node_type) {
@@ -1066,7 +1066,7 @@ AST* derivative(AST* tree) {
 We can test derivative module by printing a tree, like we did with parser, but since we have a working parser, we can just write expressions for some functions and their derivatives and check that derivative taking is correct. For applying this approach, we should have a following function for comparing trees:
 
 include/ast.h:
-```C
+```c
 #include <stdbool.h>
 
 bool equals(AST* left, AST* right);
@@ -1075,7 +1075,7 @@ bool equals(AST* left, AST* right);
 There can be several approaches to implementation of these function. For our purposes, the simplest implementation will do:
 
 src/ast.c:
-```C
+```c
 bool equals(AST* left, AST* right) {
     double accuracy = 0.000001;
     if(left->node_type != right->node_type) {
@@ -1113,7 +1113,7 @@ Another approach is checking that functions, represented by the trees, are equiv
 Now let's describe several test cases:
 
 src/main.c:
-```C
+```c
 void test_derivative() {
     char test1[] = "2 x +";
     char ans1[] = "0 1 +";
@@ -1147,7 +1147,7 @@ Constant folding is a way of optimization when each sub-tree, which can be calcu
 \*", becomes a tree, described by the expression "x 5 \*". Implementation of this optimization can look like this:
 
 src/optimizer.c:
-```C
+```c
 #include <math.h>
 
 void fold_constants(AST* tree) {
@@ -1180,7 +1180,7 @@ void fold_constants(AST* tree) {
 Another area of optimizations is using some mathematical identities. For example, here is an optimizer, which uses identities "x + 0 = x", "x - 0 = x", "0 * x = 0" and "0 / x = 0" for simplifying the tree(order is important in this case):
 
 src/optimizer.c:
-```C
+```c
 void mathematic_optimizer(AST* tree) {
     double accuracy = 0.000001;
     if(tree) {
@@ -1232,14 +1232,14 @@ void mathematic_optimizer(AST* tree) {
 We see here a new function:
 
 include/ast.h:
-```C
+```c
 void move_tree(AST* source, AST* dest);
 ```
 
 It copies **tree node** from *source* to *dest*, destroying *source* node:
 
 src/ast.c:
-```C
+```c
 void move_tree(AST *source, AST *dest) {
 	dest->node_type = source->node_type;
 	switch(source->node_type) {
@@ -1266,7 +1266,7 @@ void move_tree(AST *source, AST *dest) {
 When we have two optimizers, we can build our *optimize* function, as a combination of them:
 
 src/optimizer.c:
-```C
+```c
 void optimize(AST* tree) {
     mathematic_optimizer(tree);
     fold_constants(tree);
@@ -1276,7 +1276,7 @@ void optimize(AST* tree) {
 It's time to write some tests for our optimizer:
 
 src/main.c:
-```C
+```c
 void test_optimizer() {
     AST* tree;
     char test1[] = "2 3 * x 7 6 - + *";
@@ -1316,7 +1316,7 @@ The assembly listing consists of three parts:
 It means, that top-level logic can be expressed as follows:
 
 src/codegen.c:
-```C
+```c
 void gen_listing(double a, double b, AST* functions[], AST* derivatives[], FILE* out) {
     gen_header(..., out);
     gen_rodata(..., out);
@@ -1347,7 +1347,7 @@ global df3
 The first line tells YASM to produce 64-bit code. The second line tells YASM to produce relocatable code. The rest of lines define, that labels *a*, *b*, *f1*, *f2*, *f3*, *df1*, *df2*, *df3* are global. By default labels are local for file, in which they are declared. Implementation of function, generating header, is trivial, so I will assume, that it is already implemented and has a following signature:
 
 src/codegen.c:
-```C
+```c
 static void gen_header(FILE* out) {
     \\ Implementation
 }
@@ -1356,7 +1356,7 @@ static void gen_header(FILE* out) {
 Section *.rodata* contains info about the data, which are not changed during the program execution. We will use this section to store constants, needed for calculations. To collect this info, we could use use just a dynamic array or stack, but this structure will hold some often used constants more than once, what may lead to excess consumption of memory by solver. We can avoid it using a *set* data structure. The implementation of set goes beyond the scope of this article, so we just assume, that it is already implemented and has the following interface:
 
 include/hashset.h:
-```C
+```c
 #include <stddef.h>
 
 typedef struct hashset hashset;
@@ -1375,7 +1375,7 @@ double* to_array(hashset* table, size_t* size);
 Using this structure, we can collect information about constants as follows:
 
 src/codegen.c:
-```C
+```c
 #include "hashset.h"
 
 hashset* collect_info(AST* functions[], AST* derivatives[]) {
@@ -1395,7 +1395,7 @@ hashset* collect_info(AST* functions[], AST* derivatives[]) {
 Where *collect_node* function collects constants from a single tree and looks like following:
 
 src/codegen.c:
-```C
+```c
 hashset* collect_node(AST* function) {
     hashset *result = create_hashset();
     switch(function->node_type) {
@@ -1425,7 +1425,7 @@ section .rodata
 Where *labelname* stands for the name of the constant, *dq* means that stored value has size of 64 bits and 1.000 is actually the stored constant. Knowing this, proceed to the implementation:
 
 src/codegen.c:
-```C
+```c
 void gen_rodata(double** constants, size_t *size, double a, double b, AST* functions, AST* derivatives, FILE* out) {
     fputs("section .rodata\n", out);
     fprintf(out, "    a dq %lf\n", a);
@@ -1533,7 +1533,7 @@ This command stores the value of the argument from x86 stack onto x87 stack.
 Using all these definitions, we're ready to write a generator for *.text* section:
 
 src/codegen.c:
-```C
+```c
 #include <math.h>
 #include <stdlib.h>
 

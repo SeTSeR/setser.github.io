@@ -24,6 +24,7 @@ url: "https://setser.github.io/" # the base hostname & protocol for your site, e
 
 # Build settings
 markdown: kramdown
+highlighter: rouge
 remote_theme: chrisbobbe/jekyll-theme-prologue
 plugins:
   - jekyll-sitemap
