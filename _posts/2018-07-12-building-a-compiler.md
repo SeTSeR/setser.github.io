@@ -4,6 +4,8 @@ author: Sergey
 layout: post
 ---
 
+This article is devoted to development of a calculating system, which solves a problem of searching an area of curvilinear triangle.
+
 # Table of Contents
 {:.no_toc}
 1. [Task description](#task-description)
