@@ -1625,6 +1625,8 @@ At this stage compiler produces too much code to check it with a look, it can be
 
 To check, that out program is really correct, it makes sense printing some values of generated functions in some intermediate points.
 
+The full code of program, which we have written, can be found [here](https://github.com/SeTSeR/SimpleCompiler).
+
 ## Further improvements
 
 There are many places in our program, which can be improved.
