@@ -5,29 +5,9 @@ layout: post
 ---
 
 # Table of Contents
+{:.no_toc}
 1. [Task description](#task-description)
-2. [Design](#design)
-    1. [Project structure](#project-structure)
-    2. [Build system](#build-system)
-    3. [Solver design](#solver-design)
-    4. [Compiler design](#compiler-design)
-3. [Implementation](#implementation)
-    1. [Solver implementation](#solver-implementation)
-    2. [Compiler implementation](#compiler-implementation)
-        1. [AST](#ast)
-        2. [Parsing](#parsing)
-        3. [Derivative taking](#derivative-taking)
-        4. [Optimization](#optimization)
-        5. [Code generation](#code-generation)
-4. [Further improvements](#further-improvements)
-    1. [Optimizations](#optimizations)
-    2. [Testing](#testing)
-    3. [Language extensions](#language-extensions)
-    4. [User interface](#user-interface)
-    5. [Refactoring](#refactoring)
-5. [Resume](#resume)
-
-
+{:toc}
 
 # Task description
 The task, I was supposed to solve, was the following: three functions are given, and area of curvilinear triangle between the curves, described by these functions, should be calculated. Also two numbers are given. It's guaranteed that every pair of curves contains exactly one common point in this segment. Also, it's guaranteed that these functions are twice differentiable. Functions, that describe triangle, are written in file, using the following format:
