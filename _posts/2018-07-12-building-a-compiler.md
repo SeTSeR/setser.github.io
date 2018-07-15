@@ -406,7 +406,7 @@ double solve(double (*f)(double), double (*df)(double), double a, double b, doub
 The process of searching area of curvilinear triangle can be divided into three stages:
 1. Searching the common point of the curves, which are sides of the triangle. Let these points be x1, x2 and x3.
 2. Searching the area between the graph of the function, X-axis and vertical lines, that passes through found points(i.e integrals of the functions).
-3. Searching an area of a triangle, using the formula: ![Formula of area](http://latex2png.com/output//latex_b75f6caa8fe0789b2728f603c6651c1a.png)
+3. Searching an area of a triangle, using the formula: ![Formula of area]({{ "/assets/images/formula.png" | absolute_url }})
 
 There are two questions, which should be answered, before we'll be able to implement our *area* function. Firstly, we should remember, that the Newton's method can only solve equations of type f(x) = 0, but we need to solve equations of type f(x) = g(x). Mathematically, this equation is equivalent to the first equation, but in C we have no straightforward way to create the function, that returns f(x) - g(x), if we have functions, that return f(x) and g(x). I chose a little hacky workaround of this problem:
 
