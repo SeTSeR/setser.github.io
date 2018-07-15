@@ -584,7 +584,7 @@ As you can see, here appeared a module, which we haven't talked about before, ca
 
 include/error.h:
 ```c
-voi.eror(char* message);
+void error(char* message);
 ```
 It provides a function, handling an error, given as error message. For the purposes of this article, we will choose the simplest way of error handling: the program will just crash and print the error message, so this signature will work well. For the more advanced error handling, it's good to have a special error type, which can store information about error type and a cause of it. The implementation of this module is straightforward and can be provided at once:
 
