@@ -6,12 +6,12 @@ layout: post
 
 This article is devoted to development of a calculating system, which solves a problem of searching an area of curvilinear triangle.
 
-# Table of Contents
+## Table of Contents
 {:.no_toc}
 1. [Task description](#task-description)
 {:toc}
 
-# Task description
+## Task description
 The task, I was supposed to solve, was the following: three functions are given, and area of curvilinear triangle between the curves, described by these functions, should be calculated. Also two numbers are given. It's guaranteed that every pair of curves contains exactly one common point in this segment. Also, it's guaranteed that these functions are twice differentiable. Functions, that describe triangle, are written in file, using the following format:
 
 The first line of the file contains bounds of the segment, in which vertices of triangle are situated.
@@ -29,8 +29,8 @@ SPEC_FILE=input.txt make
 
 The result must be calculated with an accuracy of 0.1%.
 
-# Design
-## Project structure
+## Design
+### Project structure
 Firstly, we need to describe the structure of the project files, which is used. The project directory tree can be described as follows:
 ```
 CompilerLab
@@ -47,7 +47,7 @@ CompilerLab
 
 ```
 Since compiler and solver are independent programs, each has its own directory tree and its own Makefile, which will be described in detail in the next section. Directory **build** is used for storing intermediate compilation results. Directory **out** contains resulting files, such as assembly listing, compiler and solver binaries.
-## Build system
+### Build system
 As project structure is defined, it's time to talk about program building process. It goes through several stages:
 1. The compiler should be built.
 2. The compiler should generate from the input file the assembly listing which is compiled to an object file.
@@ -142,7 +142,7 @@ $(OBJ): $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) $< -o $@
 ```
 
-## Solver design
+### Solver design
 This and the following section describe the structure of our programs and basic interface of our modules.
 
 Let's begin with solver, because it's a simplest part of the task. What should it do? This program has previously prepared bounds and functions, so the simplest interface of working with this program is calling it without arguments and getting the result of its work, i.e an area of curvilinear triangle, as its output.
@@ -167,7 +167,7 @@ typedef double (*function)(double)
 double area(double a, double b, function funcs[3], function derivatives[3], double eps);
 ```
 
-## Compiler design
+### Compiler design
 The second program we need to create is significantly more complex, but the scenario of its use is very simple: it's given two arguments - name of the file with bounds and functions and name of the file, where the listing should be written. Compiler reads data from the first file and writes the output into the second.
 
 To describe the structure of the program, we need to remember the steps of the compilation process:
@@ -215,11 +215,11 @@ void gen_listing(double a, double b, AST* functions[3], AST* derivatives[3], FIL
 
 Note, that we didn't state, what the type AST means. There are several ways to implement this structure, we'll discuss it later. As for now, we'll just include in every file, which requires this definition, file ast.h. We'll assume for now, that this file contains a description of type of the parsing tree.
 
-# Implementation
+## Implementation
 
 In this article we will follow top-to-bottom development strategy. In the first place we will describe the general program logic, using interfaces, given above. 
 
-## Solver implementation
+### Solver implementation
 
 At the first iteration of building the solver, we'll provide a stub implementation of mathematical interface, and write the solver program, using it. The simplest stub implementation of *area* function is simply returning zero:
 
@@ -529,7 +529,7 @@ If we run code with these implementations, we should get something like:
 ```
 Which is the correct answer.
 
-## Compiler implementation
+### Compiler implementation
 
 Since we have finished with mathematical part, let's proceed with a compiler. As I stated above, we'll have to implement at least four modules: parser, derivative, optimizer and codegen. But before that we will write a program, assuming that all of these modules have already been written. It should be noted, that before we write all the modules, we won't be able to build the entire system, so we would build and test a compiler *separately*. We have a Makefile for it, so we're able to build it independently from the rest of the program. Since we will work only with the compiler now, I will omit the prefix compiler/ in all file names below.
 
@@ -647,7 +647,7 @@ void gen_listing(double a, double b, AST* functions[], AST* derivatives[], FILE*
 
 As we have finished with high-level logic, we can move on to implementation of modules.
 
-### AST
+#### AST
 
 As you remember, when we designed a compiler, we left a type of the parsing tree undefined. Now it's time to fix it and define a type for tree and some interface for it. To do it, we must firstly define, what we will call 'parsing tree'. In our case, parsing tree will be a tree, which represents an expression in the following manner:
 1. Every leaf describes an expression of type 'p', where p is a constant or a variable 'x'.
@@ -825,7 +825,7 @@ void print_tree(AST* to_print, FILE* out) {
 
 As the form of tree representation I chose a reverse polish notation, because infix notation will require parentheses, which can be difficult to read, especially when the expression is very long. Also, in this snippet I used a feature of *switch* construction implementation in C: the next case branch will be executed immediately after the previous, if reserved word *break* isn't place in the end of it.
 
-### Parsing
+#### Parsing
 
 As I mentioned earlier, parsing is a process of building parsing tree from the input string. There is an algorithm of parsing reverse polish notation:
 1. Split input line by spaces into terms and create an empty stack.
@@ -971,7 +971,7 @@ When we finish testing, we should remove added lines from the *main* function to
 
 After we have finished a parser module, we can proceed with a derivative module.
 
-### Derivative taking
+#### Derivative taking
 In the previous stage we defined 1-to-1 correspondence between functions and parsing trees. This correspondence allows us finding a tree of function's derivative by function's tree, using the following set of rules:
 * f'(x) = 0 if f(x) = const.
 * f'(x) = 1 if f(x) = x.
@@ -1139,7 +1139,7 @@ The provided approach to testing seems to be very interesting, because it can be
 
 It's also worth mentioning, that function *test_derivative* has a memory leak. In our model example this does not have a great effect, because trees are not very big, but in a real programs memory leaks should be avoided.
 
-### Optimization
+#### Optimization
 
 As we can see from the last section, derivative taking can produce a very large tree. Translating it may produce very inefficient code, so it would be good to "compress" the tree, removing some unnecessary operations from it. I will show two possible directions of optimization: constant folding and using of mathematical identities.
 
@@ -1304,7 +1304,7 @@ If all is correct, we should get the following output:
 
 The full code of the optimizer can be found [here](https://github.com/SeTSeR/CompilerLabAgain/blob/85a38c4782734aa1eca1a43b7c11e8fe0fcce04f/compiler/src/optimizer.c).
 
-### Code generation
+#### Code generation
 
 The last stage of compiling process is code generation. This stage can be considered as the most complex stage of compiling process. In this stage, we should generate an assembly listing, containing the borders from input file, and implementations of functions, that we have as parsing trees.
 
@@ -1625,11 +1625,11 @@ At this stage compiler produces too much code to check it with a look, it can be
 
 To check, that out program is really correct, it makes sense printing some values of generated functions in some intermediate points.
 
-# Further improvements
+## Further improvements
 
 There are many places in our program, which can be improved.
 
-## Optimizations
+### Optimizations
 
 Firstly, we can improve our arithmetic optimizations. For example, we don't use commutativity and associativity of such operations as '+' and '\*'. For example, an expression
 ```
@@ -1647,21 +1647,21 @@ Another way of optimization is architecture-dependent optimization. We can use p
 
 There is another feature of x87, that can cause some problems. The thing is that x87 stack can hold only eight values. It means, that we should take some actions to avoid its overflow, for example, store values on x86 stack instead of x87, or use SSE instruction set.
 
-## Testing
+### Testing
 
 The test system can be significantly improved. As I mentioned earlier, if we create a separate testing program with its own error handling, we will be able to test any function, which uses error handling from *error.h*. Similarly, we can redefine *stdin* and *stdout*, using *freopen* function to work with functions, that use these streams. There is a methodology of building a program, based on testing, called **test-driven development**, in which tests are written before the functionality.
 
-## Language extensions
+### Language extensions
 
 We can also extend our language, adding there some operators, or using infix notation. Or we can add an assignment operators and variables, other than x, control operators and other stuff.
 
 Anther direction is porting the compiler to some architectures, different from x86, for example, to ARM.
 
-## User interface
+### User interface
 
 Some user interface for compiler and solver can be useful. We can add some command-line flags for compiler and solver, for example "--help", which would print description of the program and scenarios of its use. Some comments on calculation process can also be useful. They can be added as some debugging flags. It can help in testing of the program.
 
-## Refactoring
+### Refactoring
 
 There are some places in our projects, that can be improved. For example, detaching the logic of walking the tree from the logic of derivative taking, optimizing and code generating, may make code more clear.
 
@@ -1669,6 +1669,6 @@ Another way of improving our program can be moving building of table with consta
 
 Some of these ideas are implemented in my [CompilerLab](https://github.com/SeTSeR/CompilerLab), so check it out.
 
-# Resume
+## Resume
 
 In this article we built a calculating system, consisting of the compiler and the solver, which solves a problem of finding of area of curvilinear triangle on the given segment. During writing of this system, we saw some approaches to designing, writing and testing programs and described some was of further improvement of our program.
