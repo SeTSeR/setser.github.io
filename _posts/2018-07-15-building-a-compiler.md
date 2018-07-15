@@ -1042,8 +1042,8 @@ AST* derivative(AST* tree) {
                     result->first_arg = derivative(tree->first_arg);
                     result->second_arg = derivative(tree->second_arg);
                     break;
-                \\ cases MULTIPLY and DIVIDE
-                \\ ...
+                // cases MULTIPLY and DIVIDE
+                // ...
                 case SIN:
 					result->operator_type = MULTIPLY;
 					AST* leftarg = create_tree();
@@ -1054,8 +1054,8 @@ AST* derivative(AST* tree) {
 					result->first_arg = leftarg;
 					result->second_arg = rightarg;
 					break;
-                \\ cases COS, TAN and CTG
-                \\ ...
+                // cases COS, TAN and CTG
+                // ...
             }
             break;
     }
@@ -1349,7 +1349,7 @@ The first line tells YASM to produce 64-bit code. The second line tells YASM to 
 src/codegen.c:
 ```c
 static void gen_header(FILE* out) {
-    \\ Implementation
+    // Implementation
 }
 ```
 
