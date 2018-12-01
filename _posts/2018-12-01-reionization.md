@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: article
 author: Sergey
 title: "Реионизация"
 ---
