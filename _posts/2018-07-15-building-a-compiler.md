@@ -374,10 +374,10 @@ int main(int argc, char** argv) {
 }
 ```
 
-This code generates an assembly listing, which contains three functions:
-* f1(x) = 2 - tg(x/4)
-* f2(x) = x
-* f3(x) = 0.2π
+This code generates an assembly listing, which contains three functions:\\
+$$f_1(x) = 2 - tg(\frac{x}{4})$$\\
+$$f_2(x) = x$$\\
+$$f_3(x) = 0.2\pi$$
 
 and their derivatives.
 
@@ -408,7 +408,7 @@ The process of searching area of curvilinear triangle can be divided into three 
 2. Searching the area between the graph of the function, X-axis and vertical lines, that passes through found points(i.e integrals of the functions).
 3. Searching an area of a triangle, using the formula: ![Formula of area]({{ "/assets/images/formula.png" | absolute_url }})
 
-There are two questions, which should be answered, before we'll be able to implement our *area* function. Firstly, we should remember, that the Newton's method can only solve equations of type f(x) = 0, but we need to solve equations of type f(x) = g(x). Mathematically, this equation is equivalent to the first equation, but in C we have no straightforward way to create the function, that returns f(x) - g(x), if we have functions, that return f(x) and g(x). I chose a little hacky workaround of this problem:
+There are two questions, which should be answered, before we'll be able to implement our *area* function. Firstly, we should remember, that the Newton's method can only solve equations of type $$f(x) = 0$$, but we need to solve equations of type $$f(x) = g(x)$$. Mathematically, this equation is equivalent to the first equation, but in C we have no straightforward way to create the function, that returns $$f(x) - g(x)$$, if we have functions, that return $$f(x)$$ and $$g(x)$$. I chose a little hacky workaround of this problem:
 
 solver/src/maths.c:
 ```c
