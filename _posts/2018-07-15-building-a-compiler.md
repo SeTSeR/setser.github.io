@@ -148,7 +148,7 @@ This and the following section describe the structure of our programs and basic 
 
 Let's begin with solver, because it's a simplest part of the task. What should it do? This program has previously prepared bounds and functions, so the simplest interface of working with this program is calling it without arguments and getting the result of its work, i.e an area of curvilinear triangle, as its output.
 
-Searching the area of curvilinear triangle consists of two parts: searching the vertices and searching area of triangle as algebraic sum of areas bounded by graphs of functions, the X-axis and vertical lines, passing through found points. Mathematical side of this task is described in detail in my report. So, mathematical module must implement two functions: calculating the root of the equation and calculating the integral of the function. The natural choice for interface of this module will be a function area with the following signature:
+Searching the area of curvilinear triangle consists of two parts: searching the vertices and searching area of triangle as algebraic sum of areas bounded by graphs of functions, the X-axis and vertical lines, passing through found points. Mathematical side of this task is described in detail in my [report](https://github.com/SeTSeR/CompilerLab/blob/master/report.pdf). So, mathematical module must implement two functions: calculating the root of the equation and calculating the integral of the function. The natural choice for interface of this module will be a function area with the following signature:
 
 solver/include/maths.h:
 ```c
