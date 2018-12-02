@@ -2,6 +2,7 @@
 title: "Building a compiler"
 author: Sergey
 layout: post
+comments: true
 ---
 
 This article is devoted to development of a calculating system, which solves a problem of searching an area of curvilinear triangle.
