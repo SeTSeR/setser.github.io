@@ -1,7 +1,7 @@
 ---
 layout: post
 author: Sergey
-title: "Способы отладки программы в Linux"
+title: "Отладка программ в Linux"
 comments: true
 ---
 
