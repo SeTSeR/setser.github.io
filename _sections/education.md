@@ -15,5 +15,5 @@ Some projects, in which I took part:
 <li><a href="https://github.com/SeTSeR/CompilerLab.git">CompilerLab</a> - simple tool for finding an area of curvilinear triangle. It grew from my laboratory work to a hobby project. On this project I trained some aspects of compiler design, such as parsing, code generation and optimization.</li>
 <li><a href="https://github.com/SeTSeR/TestApp.git">TestApp</a> - test task for JetBrains internship, an app for searching courses on <a href="stepik.org">Stepik</a>.</li>
 <li><a href="https://github.com/SeTSeR/AnnicomScrobbler.git">AnnicomScrobbler</a> - a simple tool for sending playing music to <a href="https://annimon.com">annimon.com</a>, compatible with all players, using MPRIS protocol.</li>
-<li><a href="https://github.com/SeTSeR/dotfiles.git">dotfiles</a> - a collection of my configuration files for various programs I use.</li>
+<li><a href="https://github.com/SeTSeR/nixos-config.git">nixos-config</a> - a collection of my configuration files for NixOS and various programs I use.</li>
 </ul></div>
