@@ -18,7 +18,7 @@ subtitle: Software Engineer
 email: setser200018@gmail.com
 description: Website of Sergey Makarov, software engineer.
 author: Sergey Makarov
-avatar: assets/images/avatar.jpg
+avatar: assets/images/avatar.jfif
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://setser.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 
